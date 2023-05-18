@@ -1,10 +1,10 @@
-import { Box } from '@mui/material';
+import MenuBar from "./component/MenuBar/MenuBar.Layout";
 
 const App = () => {
   return (
-    <Box>
-      kjdenwkj
-    </Box>
+    <>
+      <MenuBar />
+    </>
   );
 }
 
