@@ -21,9 +21,10 @@ function ResponsiveAppBar() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const pages = ["About Us", "Products", "Services"];
-  const productsList = ["Bonds", "Insurance", "Mutual Funds"];
+  const productsList = ["InterCorporate Deposit", "Bonds", "Insurance", "Mutual Funds"];
   const smPages = [
     "About Us",
+    "InterCorporate Deposit",
     "Bonds",
     "Insurance",
     "Mutual Funds",
