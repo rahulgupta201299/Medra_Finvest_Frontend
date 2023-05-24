@@ -20,7 +20,7 @@ function ResponsiveAppBar() {
   const [openProductNavMenu, setOpenProductNavMenu] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const pages = ["About Us", "Products", "Services"];
+  const pages = ["About Us", "Products", "Contact Us"];
   const productsList = ["InterCorporate Deposit", "Bonds", "Insurance", "Mutual Funds"];
   const smPages = [
     "About Us",
@@ -28,7 +28,7 @@ function ResponsiveAppBar() {
     "Bonds",
     "Insurance",
     "Mutual Funds",
-    "Services",
+    "Contact Us",
   ];
   const profile = loggedIn ? ["Profile", "Logout"] : [];
 
@@ -84,14 +84,14 @@ function ResponsiveAppBar() {
           >
             <Box style={{ display: "flex", flexDirection: "column" }}>
               <Typography variant="h5" color="#00008B">
-                MedraFinvest
+                <b>MedraFinvest</b>
               </Typography>
               <Typography
                 fontSize="12px"
                 color="#00008B"
-                sx={{ color: "#D10000" }}
+                sx={{ color: "#FA6800" }}
               >
-                Vishwass Apka, Sath Hamara
+                <b>Vishwass Apka, Sath Hamara</b>
               </Typography>
             </Box>
           </Typography>
@@ -165,14 +165,14 @@ function ResponsiveAppBar() {
           >
             <Box style={{ display: "flex", flexDirection: "column" }}>
               <Typography variant="h6" color="#00008B">
-                MedraFinvest
+                <b>MedraFinvest</b>
               </Typography>
               <Typography
                 fontSize="12px"
                 color="#00008B"
-                sx={{ color: "#D10000" }}
+                sx={{ color: "#FA6800" }}
               >
-                Vishwass Apka, Sath Hamara
+                <b>Vishwass Apka, Sath Hamara</b>
               </Typography>
             </Box>
           </Typography>
