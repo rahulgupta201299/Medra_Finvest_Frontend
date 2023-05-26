@@ -1,14 +1,18 @@
 import React, { useState } from 'react'
-import { Box } from '@mui/material'
 import Typical from 'react-typical'
-import { Button, Typography } from '@material-ui/core';
+import { Button, Box, Typography, Grid } from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { ROUTES } from '../../Route/Routes.constants';
 import LandingImg from '../../assets/LandingPageImg.png';
 import ScaleIcon from '../../assets/ScaleIcon.png';
 import CoinIcon from '../../assets/CoinIcon.png';
+import Rank1 from '../../assets/Rank1.png';
+import LowRiskIcon from '../../assets/LowRiskIcon.png';
 import DiversifiedPortfolio from '../../assets/DiversifiedPortfolio.png';
+import SystemUpdate from '../../assets/SystemUpdate.png';
+import ReturnOnInvestment from '../../assets/ReturnOnInvestment.png';
+import BoxSection from './BoxSection.Layout';
 
 const useStyles = makeStyles(theme => ({
     upperContainer: {
@@ -102,6 +106,60 @@ const useStyles = makeStyles(theme => ({
 		'@media screen and (max-width: 500px)': {
 			width: '90%',
 		},
+	},
+	header3: {
+		fontSize: '2rem',
+		fontWeight: 700,
+		lineHeight: '2.3rem',
+		letterSpacing: '1px',
+		textAlign: 'center',
+		margin: '1rem auto',
+		width: '64%',
+		'@media screen and (max-width: 899px)': {
+			fontSize: '1.6rem',
+			lineHeight: '1.8rem',
+			width: '70%',
+		},
+		'@media screen and (max-width: 634px)': {
+			fontSize: '1.2rem',
+			lineHeight: '1.5rem',
+			width: '90%',
+		},
+	},
+	rankIcon: {
+		width: '30px',
+		height: '30px',
+		'@media screen and (max-width: 634px)': {
+			width: '25px',
+			height: '25px',
+		},
+	},
+	childContainer3: {
+		backgroundColor: '#9494FF',
+		fontWeight: 700,
+		fontSize: '1rem',
+		borderRadius: '8px',
+		marginRight: '1rem',
+		marginTop: '1rem',
+	},
+	iconText3: {
+		display: 'flex',
+		flexDirection: 'column',
+		alignItems: 'center',
+		gap: '14px',
+		textAlign: 'center',
+	},
+	childContainer31: {
+		backgroundColor: '#DEDEDE',
+		fontWeight: 700,
+		fontSize: '2rem',
+		borderRadius: '8px',
+		marginRight: '1rem',
+		marginTop: '1rem',
+		textAlign: 'center',
+		'@media screen and (max-width: 400px)': {
+			fontSize: '1.5rem',
+		},
 	}
 }));
 
@@ -146,8 +204,8 @@ const LandingPage = () => {
 						steps={[
 							'Top-tier Bonds', 1500,
 							'Secured Guaranteed Bonds', 2200,
-							'Perpetual Bonds', 1200,
-							'Government Securities', 2000,
+							'Perpetual Bonds', 1300,
+							'Government Securities', 2200,
 						]}
 						loop={Infinity}
 						wrapper="h1"
@@ -176,6 +234,69 @@ const LandingPage = () => {
 				</Button>
 			</Box>
 			<img className={classes.imgStyle} src={LandingImg} alt="bonds" />
+		</Box>
+		<BoxSection />
+		<Box style={{ backgroundColor: '#F5F5F5', padding: '1rem 0', }}>
+			<Typography className={classes.header3}>
+				MedraFinvest is <img className={classes.rankIcon} src={Rank1} /> {' '}
+				online platform for the largest collection of Bonds
+			</Typography>
+			<Grid style={{ padding: '2rem', paddingTop: '3rem', margin: '0 auto' }} container justifyContent='center' xs={12} sm={12} md={10} lg={12} spacing={6}>
+				<Grid className={classes.childContainer3} item xs={8} sm={5} md={3} lg={3}>
+					<Box className={classes.iconText3}>
+						<img src={LowRiskIcon} width="50%" />
+						Consistent capital growth with minimal risk
+					</Box>
+				</Grid>
+				<Grid className={classes.childContainer3} item xs={8} sm={5} md={3} lg={3}>
+					<Box className={classes.iconText3}>
+						<img src={SystemUpdate} width="34%" />
+						Stay Updated with the best price of bonds on our platform
+					</Box>
+				</Grid>
+				<Grid className={classes.childContainer3} item xs={8} sm={6} md={3} lg={3}>
+					<Box className={classes.iconText3}>
+						<img style={{ marginTop: '-0.5rem' }} src={ReturnOnInvestment} width="90%" />
+						Return on Fixed Income as high as 12%
+					</Box>
+				</Grid>
+			</Grid>
+
+			<Grid style={{ padding: '2rem', margin: '0 auto' }} container justifyContent='center' xs={12} sm={12} md={10} lg={12} spacing={6}>
+				<Grid className={classes.childContainer31} item xs={8} sm={7} md={3} lg={3}>
+					4000 <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>CR</span>
+					<p style={{ fontSize: '1rem', fontWeight: 600, }}>
+						worth of bonds are available on our platform
+					</p>
+				</Grid>
+				<Grid className={classes.childContainer31} item xs={8} sm={5} md={3} lg={3}>
+					1000 <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>CR</span>
+					<p style={{ fontSize: '1rem', fontWeight: 600, }}>
+						total transactions through our platforms
+					</p>
+				</Grid>
+				<Grid className={classes.childContainer31} item xs={8} sm={5} md={3} lg={3}>
+					1000+
+					<p style={{ fontSize: '1rem', fontWeight: 600, }}>
+						registered users are growing
+					</p>
+				</Grid>
+			</Grid>
+			<Button 
+				style={{ 
+					color: hover ? '#282828' : '#FFF',
+					backgroundColor: hover ? '#2E8BC0' : '#0000D1',
+					margin: '1rem auto',
+					display: 'flex',
+					justifyContent: 'center',
+				}} 
+				className={classes.btnStyle} 
+				onMouseEnter={() => setHover(true)} 
+				onMouseLeave={() => setHover(false)}
+				onClick={() => navigate(ROUTES.BONDS)}
+			>
+				Learn More
+			</Button>
 		</Box>
 	</Box>
   )
