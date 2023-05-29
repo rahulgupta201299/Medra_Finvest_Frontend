@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Box, Button, FormControlLabel, Grid, Switch, Typography, makeStyles } from '@material-ui/core';
 import OtpInput from 'react-otp-input';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LoginSideImg from '../../assets/LoginSideImg.jpg'
+import LoginSideImg from '../../assets/ProfileImg.jpeg'
 import InputText from '../common/InputText';
 
 const useStyles = makeStyles(() => {

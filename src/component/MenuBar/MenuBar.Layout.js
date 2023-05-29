@@ -21,13 +21,14 @@ function ResponsiveAppBar() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const pages = ["About Us", "Products", "Contact Us"];
-  const productsList = ["InterCorporate Deposit", "Bonds", "Insurance", "Mutual Funds"];
+  const productsList = ["InterCorporate Deposit", "Bonds", "Insurance", "Mutual Funds", "Unlisted Stocks"];
   const smPages = [
     "About Us",
     "InterCorporate Deposit",
     "Bonds",
     "Insurance",
     "Mutual Funds",
+    "Unlisted Stocks",
     "Contact Us",
   ];
   const profile = loggedIn ? ["Profile", "Logout"] : [];

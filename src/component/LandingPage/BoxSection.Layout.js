@@ -34,7 +34,7 @@ const useStyles = makeStyles(() => ({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		gap: '3rem',
+		gap: '5rem',
 		overflowX: 'scroll',
 		width: 'calc(100% - 4rem)',
 		'@media screen and (max-width: 899px)': {
@@ -54,60 +54,85 @@ const useStyles = makeStyles(() => ({
 		'@media screen and (max-width: 899px)': {
 			marginTop: '0',
 		}
-	}
+	},
+	learnContainer: {
+		backgroundColor: '#E2DED0',
+		padding: '2rem',
+		height: '23rem',
+		'@media screen and (max-width: 899px)': {
+			padding: '1.5rem',
+		},
+		'@media screen and (max-width: 500px)': {
+			padding: '1rem',		
+		},
+	},
+	
 }));
 
-const bondData = [
-	{
-		name: 'FULLERTON INDIA',
-		type: 'AAA',
-		details: [
-			{
-				key: 'Maturity Date',
-				value: '13-Oct-2025',
-			},
-			{
-				key: 'Payments',
-				value: 'Yearly',
-			},
-			{
-				key: 'Yield',
-				value: '8.27%',
-			},
-			{
-				key: 'Min. Investment',
-				value: '1000000',
-			},
-		],
-	},
-];
-
-const BoxSection = () => {
+const BoxSection = ({ bondData = null, learnAboutBondsData = null, meetOurTeam = null }) => {
 
   const classes = useStyles();
   const navigate = useNavigate();
 
   return (
-	<Box className={classes.bondContainer}>
-		<Box style={{ display: 'flex', justifyContent: 'space-between' }}>
-			<Typography className={classes.bondTitle}>
-				High Demand Bonds
-			</Typography>
-			<Tooltip title="SEE MORE">
-				<DoubleArrowIcon 
-					className={classes.iconStyle}
-					onClick={() => navigate(ROUTES.BONDS)}
-					fontSize="large"
-				/>
-			</Tooltip>
-		</Box>
-		<Box className={classes.bondGridFormat}>
-			<BoxContainer data={bondData} />
-			<BoxContainer data={bondData} />
-			<BoxContainer data={bondData} />
-			<BoxContainer data={bondData} />
-			<BoxContainer data={bondData} />
-		</Box>
+	<Box>
+		{
+			bondData && (
+				<Box className={classes.bondContainer}>
+					<Box style={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography className={classes.bondTitle}>
+							High Demand Bonds
+						</Typography>
+						<Tooltip title="SEE MORE">
+							<DoubleArrowIcon 
+								className={classes.iconStyle}
+								onClick={() => navigate(ROUTES.BONDS)}
+								fontSize="large"
+							/>
+						</Tooltip>
+					</Box>
+					<Box className={classes.bondGridFormat}>
+						{
+							bondData && bondData.map((item, ind) => (
+								<BoxContainer _bondData={item} />
+							))
+						}
+					</Box>
+				</Box>
+			)
+		}
+		{
+			learnAboutBondsData && (
+				<Box className={classes.learnContainer}>
+					<Typography style={{ color: '#282828' }} className={classes.bondTitle}>
+						Learn About Bonds
+					</Typography>
+					<Box className={classes.bondGridFormat}>
+						{
+							learnAboutBondsData && learnAboutBondsData.map((item) => (
+								<BoxContainer _learnAboutBondsData={item} />
+							))
+						}
+					</Box>
+				</Box>
+			)
+		}
+		{
+			meetOurTeam && (
+				<Box style={{ backgroundColor: '#f5f5f5', height: '27rem' }} className={classes.learnContainer}>
+					<Typography style={{ color: '#282828' }} className={classes.bondTitle}>
+						Meet Our Team
+					</Typography>
+					<Box className={classes.bondGridFormat}>
+						{
+							meetOurTeam && meetOurTeam.map((item) => (
+								<BoxContainer _meetOurTeam={item} />
+							))
+						}
+					</Box>
+				</Box>
+			)
+		}
 	</Box>
   )
 }

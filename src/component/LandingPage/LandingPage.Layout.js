@@ -5,13 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { ROUTES } from '../../Route/Routes.constants';
 import LandingImg from '../../assets/LandingPageImg.png';
-import ScaleIcon from '../../assets/ScaleIcon.png';
-import CoinIcon from '../../assets/CoinIcon.png';
 import Rank1 from '../../assets/Rank1.png';
 import LowRiskIcon from '../../assets/LowRiskIcon.png';
-import DiversifiedPortfolio from '../../assets/DiversifiedPortfolio.png';
 import SystemUpdate from '../../assets/SystemUpdate.png';
 import ReturnOnInvestment from '../../assets/ReturnOnInvestment.png';
+import { BondDetails, learnAboutBondsData, meetOurTeam  } from '../common/Data.constant';
 import BoxSection from './BoxSection.Layout';
 
 const useStyles = makeStyles(theme => ({
@@ -75,8 +73,8 @@ const useStyles = makeStyles(theme => ({
 		}
 	},
 	btnStyle: {
-		marginTop: '3rem',
 		margin: '0 5rem',
+		marginTop: '3rem',
 		backgroundColor: '#2E2EFF',
 		color: '#FFF',
 		fontWeight: 700,
@@ -160,32 +158,153 @@ const useStyles = makeStyles(theme => ({
 		'@media screen and (max-width: 400px)': {
 			fontSize: '1.5rem',
 		},
-	}
+	},
+	btnStyle3: {
+		margin: '1rem auto',
+		display: 'flex',
+		justifyContent: 'center',
+		fontWeight: 700,
+		padding: '0.5rem 1.5rem',
+		borderRadius: '8px',
+		cursor: 'pointer',
+		letterSpacing: '1px',
+	},
 }));
 
-const BondDetails = [
+const bondData = [
 	{
-		src: DiversifiedPortfolio,
-		val: 'Diversify portfolio with fixed income',
-		style: { marginBottom: '4px' },
-		width: '35px',
-		height: '25px',
+		name: 'FULLERTON INDIA',
+		type: 'AAA',
+		details: [
+			{
+				key: 'Maturity Date',
+				value: '13-Oct-2025',
+			},
+			{
+				key: 'Payments',
+				value: 'Yearly',
+			},
+			{
+				key: 'Yield',
+				value: '8.27%',
+			},
+			{
+				key: 'Min. Investment',
+				value: '1000000',
+			},
+		],
 	},
 	{
-		src: CoinIcon,
-		val: 'Get Fixed Return as high as 12%',
-		style: { margin: '-0.875rem -1rem 0 -1rem' },
-		width: '65px',
-		height: '45px',
+		name: 'FULLERTON INDIA',
+		type: 'AAA',
+		details: [
+			{
+				key: 'Maturity Date',
+				value: '13-Oct-2025',
+			},
+			{
+				key: 'Payments',
+				value: 'Yearly',
+			},
+			{
+				key: 'Yield',
+				value: '8.27%',
+			},
+			{
+				key: 'Min. Investment',
+				value: '1000000',
+			},
+		],
 	},
 	{
-		src: ScaleIcon,
-		val: 'Consistent capital growth with minimal risk',
-		style: { marginTop: '-4px', marginRight: '-4px' },
-		width: '40px',
-		height: '30px',
+		name: 'FULLERTON INDIA',
+		type: 'AAA',
+		details: [
+			{
+				key: 'Maturity Date',
+				value: '13-Oct-2025',
+			},
+			{
+				key: 'Payments',
+				value: 'Yearly',
+			},
+			{
+				key: 'Yield',
+				value: '8.27%',
+			},
+			{
+				key: 'Min. Investment',
+				value: '1000000',
+			},
+		],
 	},
-]
+	{
+		name: 'FULLERTON INDIA',
+		type: 'AAA',
+		details: [
+			{
+				key: 'Maturity Date',
+				value: '13-Oct-2025',
+			},
+			{
+				key: 'Payments',
+				value: 'Yearly',
+			},
+			{
+				key: 'Yield',
+				value: '8.27%',
+			},
+			{
+				key: 'Min. Investment',
+				value: '1000000',
+			},
+		],
+	},
+	{
+		name: 'FULLERTON INDIA',
+		type: 'AAA',
+		details: [
+			{
+				key: 'Maturity Date',
+				value: '13-Oct-2025',
+			},
+			{
+				key: 'Payments',
+				value: 'Yearly',
+			},
+			{
+				key: 'Yield',
+				value: '8.27%',
+			},
+			{
+				key: 'Min. Investment',
+				value: '1000000',
+			},
+		],
+	},
+	{
+		name: 'FULLERTON INDIA',
+		type: 'AAA',
+		details: [
+			{
+				key: 'Maturity Date',
+				value: '13-Oct-2025',
+			},
+			{
+				key: 'Payments',
+				value: 'Yearly',
+			},
+			{
+				key: 'Yield',
+				value: '8.27%',
+			},
+			{
+				key: 'Min. Investment',
+				value: '1000000',
+			},
+		],
+	},
+];
 
 const LandingPage = () => {
 
@@ -224,7 +343,10 @@ const LandingPage = () => {
 					}
 				</Box>
 				<Button 
-					style={{ color: hover ? '#282828' : '#FFF', backgroundColor: hover ? '#2E8BC0' : '#2E2EFF' }} 
+					style={{ 
+						color: hover ? '#282828' : '#FFF',
+						backgroundColor: hover ? '#2E8BC0' : '#2E2EFF',
+					}} 
 					className={classes.btnStyle} 
 					onMouseEnter={() => setHover(true)} 
 					onMouseLeave={() => setHover(false)}
@@ -235,7 +357,7 @@ const LandingPage = () => {
 			</Box>
 			<img className={classes.imgStyle} src={LandingImg} alt="bonds" />
 		</Box>
-		<BoxSection />
+		<BoxSection bondData={bondData} learnAboutBondsData={null} />
 		<Box style={{ backgroundColor: '#F5F5F5', padding: '1rem 0', }}>
 			<Typography className={classes.header3}>
 				MedraFinvest is <img className={classes.rankIcon} src={Rank1} /> {' '}
@@ -286,11 +408,8 @@ const LandingPage = () => {
 				style={{ 
 					color: hover ? '#282828' : '#FFF',
 					backgroundColor: hover ? '#2E8BC0' : '#0000D1',
-					margin: '1rem auto',
-					display: 'flex',
-					justifyContent: 'center',
-				}} 
-				className={classes.btnStyle} 
+				}}
+				className={classes.btnStyle3}
 				onMouseEnter={() => setHover(true)} 
 				onMouseLeave={() => setHover(false)}
 				onClick={() => navigate(ROUTES.BONDS)}
@@ -298,6 +417,8 @@ const LandingPage = () => {
 				Learn More
 			</Button>
 		</Box>
+		<BoxSection learnAboutBondsData={learnAboutBondsData} />
+		<BoxSection meetOurTeam={meetOurTeam} />
 	</Box>
   )
 }
