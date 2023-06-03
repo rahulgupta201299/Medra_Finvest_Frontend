@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Typography, makeStyles } from '@material-ui/core';
 import WhyUsImg from '../../assets/WhyUsImg.png'
 import AboutUsImg from '../../assets/AboutUsImg.png'
+import ServicesImg from '../../assets/ServicesImg.png'
 import BoxSection from '../LandingPage/BoxSection.Layout';
 import { learnAboutBondsData, meetOurTeam } from '../common/Data.constant';
 
@@ -122,7 +123,7 @@ const AboutUs = () => {
 				</Box>
 			</Box>
 			<Box style={{ margin: '3rem 0' }} className={classes.boxContainer}>
-				<img className={classes.imgStyle2} src={WhyUsImg} />
+				<img className={classes.imgStyle2} src={ServicesImg} />
 				<Box>
 					<Typography className={classes.header}>
 						Our Services
