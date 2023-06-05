@@ -1,21 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  mobileNo: '',
-  loggedIn: false,
+  login: {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
+    loggedIn: false,
+  }
 }
 
 export const ProfileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
-   
+    addUserDetails: (state, action) => {
+      state.login = action.payload;
+    },
   },
 })
 
-export const {  } = ProfileSlice.actions;
+export const { addUserDetails } = ProfileSlice.actions;
 
 export default ProfileSlice.reducer;

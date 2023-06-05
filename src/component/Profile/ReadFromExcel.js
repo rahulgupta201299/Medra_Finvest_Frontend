@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from '@mui/material';
 import * as XLSX from "xlsx";
+import { Alert, Snackbar } from '@mui/material';
 import { Box, Button, makeStyles } from '@material-ui/core';
 import FileUpload from "react-material-file-upload";
 import Axios from '../common/Axios';
@@ -18,12 +19,13 @@ const useStyles = makeStyles(() => {
 	}
 });
 
-const ReadFromExcel = ({ setLoading }) => {
+const ReadFromExcel = ({ setLoading, type }) => {
   const [data, setData] = useState([]);
   const [rowHeader, setRowHeader] = useState([]);
   const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
   const [hover, setHover] = useState(false);
+  const [success, setSuccess] = useState(false);
   const classes = useStyles();
 
   const readExcel = (file) => {
@@ -64,18 +66,34 @@ const ReadFromExcel = ({ setLoading }) => {
   const handleSubmit = async () => {
 	setLoading(true);
 	try {
-		await Axios.post('/data/upload', { data: data, type: "bond"});
+		await Axios.post('/data/upload', { data: data, type: type});
+		setSuccess(true);
 		setData([]);
+		setRowHeader([]);
 	} catch (e) {
 		const { data } = e;
 		console.log(data?.msg);
 	} finally {
 		setLoading(false);
+		setTimeout(() => {
+			setSuccess(false)
+		}, 6000);
 	}
   }
 
   return (
 	<Box style={{ width: '92%' }}>
+		<Snackbar 
+			style={{ 
+				width: '100%',
+				margin: window.innerWidth < 900 ? '10px 0' : '10px 13%', 
+				display: 'flex', 
+				justifyContent: 'center' 
+			}} 
+			open={success} 
+		>
+			<Alert severity="success">File has been successfully uploaded</Alert>
+		</Snackbar>
 		<FileUpload
 			accept=".xlsx"
 			value={files}

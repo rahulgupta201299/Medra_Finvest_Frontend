@@ -2,6 +2,7 @@ import { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
+import { useSelector, useDispatch } from 'react-redux';
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
@@ -13,12 +14,16 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import MFLogo from "../../assets/medra_logo.png";
+import { ROUTES } from "../../Route/Routes.constants";
+import { addUserDetails } from "../redux/LandingReducer/ProfileReducer";
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openProductNavMenu, setOpenProductNavMenu] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  const loggedIn = useSelector((state) => state.profile.login.loggedIn); 
+  const firstName = useSelector((state) => state.profile.login.firstName); 
 
   const pages = ["About Us", "Products", "Contact Us"];
   const productsList = ["InterCorporate Deposit", "Bonds", "Insurance", "Mutual Funds", "Unlisted Stocks"];
@@ -34,6 +39,16 @@ function ResponsiveAppBar() {
   const profile = loggedIn ? ["Profile", "Logout"] : [];
 
   const handleJoinLink = (val) => {
+    if (val.toLowerCase() === "logout") {
+      dispatch(addUserDetails({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        loggedIn: false,
+      }));
+      return 'login';
+    }
     return val.split(" ").join("-").toLowerCase();
   };
 
@@ -233,7 +248,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title={loggedIn ? "Go to Profile" : "Login / Signup"}>
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp">{loggedIn ? "R" : null}</Avatar>
+                <Avatar alt="Remy Sharp">{loggedIn ? firstName[0] : null}</Avatar>
               </IconButton>
             </Tooltip>
             <Menu

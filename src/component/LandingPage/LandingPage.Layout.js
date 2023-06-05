@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Typical from 'react-typical'
 import { Button, Box, Typography, Grid } from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { ROUTES } from '../../Route/Routes.constants';
 import LandingImg from '../../assets/LandingPageImg.png';
@@ -311,6 +312,8 @@ const LandingPage = () => {
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   const classes = useStyles();
+  const profileData = useSelector((state) => state.profile.login);
+  console.log(profileData);
   return (
 	<Box style={{ backgroundColor: '#D4F1F4' }}>
 		<Box className={classes.upperContainer}>

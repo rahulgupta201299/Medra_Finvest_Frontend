@@ -1,9 +1,17 @@
 import React, { useState } from 'react'
 import { Box, Button, FormControlLabel, Grid, Switch, Typography, makeStyles } from '@material-ui/core';
 import OtpInput from 'react-otp-input';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LoginSideImg from '../../assets/ProfileImg.jpeg'
 import InputText from '../common/InputText';
+import { Alert, Snackbar } from '@mui/material';
+import firebase, { auth } from '../common/Firebase';
+import BackDrop from '../common/BackDrop';
+import Axios from '../common/Axios';
+import { ROUTES } from '../../Route/Routes.constants';
+import { addUserDetails } from '../redux/LandingReducer/ProfileReducer';
 
 const useStyles = makeStyles(() => {
 	return {
@@ -120,7 +128,9 @@ const EmailSignUp = (props) => {
 	const classes = useStyles();
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');
-	const { email, setEmail, password, setPassword, btnText, type } = props;
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const { email, setEmail, password, setPassword, btnText, type, firstName = '', lastName = '', mobile = '', setAlertMsg, setAlertType, setOpenAlert, setLoading, setLoginSelected, setMobile, setVerifiedMobile } = props;
 
 	const handleEmailChange = (e) => {
 		const val = e.target.value.toLowerCase();
@@ -136,9 +146,73 @@ const EmailSignUp = (props) => {
 		setPassword(val);
 	}
 
-	const handleProceed = () => {
+	const handleProceed = async () => {
 		if (type === "signup") {
-
+			const payload = {
+				firstName,
+				lastName,
+				mobile,
+				email,
+				password,
+			};
+			try {
+				setLoading(true);
+				const res = await Axios.post('/profile/signup', payload);
+				const { data } = res;
+				const { statusCode } = data;
+				setOpenAlert(true);
+				setAlertMsg(data?.msg);
+				if (statusCode === 201) {
+					setAlertType('success');
+				} else {
+					setAlertType('warning');
+				}
+				setOpenAlert(true);
+				setLoginSelected(true);
+				setMobile('');
+				setVerifiedMobile(false);
+			} catch (e) {
+				setOpenAlert(true);
+				setAlertMsg('Something Went Wrong!');
+				setAlertType('error');
+			} finally {
+				setLoading(false);
+				setTimeout(() => setOpenAlert(false), 6000);
+			}
+		} else {
+			const payload = {
+				type: "emailLogin",
+				email,
+				password,
+			};
+			try {
+				setLoading(true);
+				const res = await Axios.post('/profile/login', payload);
+				const { data } = res;
+				const { data: data1 } = data;
+				setOpenAlert(true);
+				setAlertMsg(data?.msg);
+				if (data?.login) {
+					setAlertType('success');
+					dispatch(addUserDetails({
+						loggedIn: true,
+						...data1
+					}));
+					navigate(ROUTES.HOME);
+				} else {
+					setAlertType('error');
+					if (!data?.incorrectPassword) setLoginSelected(false);
+				}
+				setOpenAlert(true);
+			} catch (e) {
+				console.log(e);
+				setOpenAlert(true);
+				setAlertMsg('Something Went Wrong!');
+				setAlertType('error');
+			} finally {
+				setLoading(false);
+				setTimeout(() => setOpenAlert(false), 6000);
+			}
 		}
 	}
 
@@ -185,8 +259,11 @@ const EmailSignUp = (props) => {
 }
 
 const MobileSignUp = (props) => {
-	const { mobile, showOtpInput, otp, setOtp, setMobile, setShowOtpInput, verifiedMobile, setVerifiedMobile, type } = props;
+	const { mobile, showOtpInput, otp, setOtp, setMobile, setShowOtpInput, verifiedMobile, setVerifiedMobile, type, setAlertMsg, setAlertType, setOpenAlert, setLoading, setLoginSelected } = props;
 	const classes = useStyles();
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+	const [confirmation, setConfirmation] = useState('');
 
 	const handleMobileChange = (e) => {
 		const val = e.target.value.replace(/\D/g, '');
@@ -194,15 +271,98 @@ const MobileSignUp = (props) => {
 		setMobile(val);
 	}
 
-	const handleSendOtp = () => {
-		setShowOtpInput(true);
+	const setUpRecaptcha=()=>{
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': function(response) {
+              handleSendOtp();
+            },
+            'expired-callback':(err)=>{
+                console.log(err);
+            },
+            defaultCountry: "IN",
+        });
+    }
+
+	const handleSendOtp = async () => {
+		setUpRecaptcha();
+		var phoneNumber = "+91" + mobile;
+        var appVerifier = window.recaptchaVerifier;
+
+		try {
+			setLoading(true);
+			const _confirmation = await auth.signInWithPhoneNumber(phoneNumber, appVerifier);
+			setShowOtpInput(true);
+			setConfirmation(_confirmation);
+			setAlertMsg("OTP Sent Successfully!");
+			setAlertType('success');
+			setOpenAlert(true);
+		} catch (e) {
+			setShowOtpInput(false);
+			setAlertMsg("Some error Occured. Try Again!");
+			setAlertType('error');
+			setOpenAlert(true);
+		} finally {
+			setLoading(false);
+		}
+		setTimeout(() => setOpenAlert(false), 6000);
 	}
 
-	const handleVerifyOtp = () => {
-		if (type === "signup") {
-			setShowOtpInput(false);
-			setVerifiedMobile(true);
+	const handleLoginApiCall = async () => {
+		const payload = {
+			type: "mobileLogin",
+			mobile,
 		}
+		try {
+			setLoading(true);
+			const res = await Axios.post('/profile/login', payload);
+			const { data } = res;
+			const { data: data1 } = data;
+			setOpenAlert(true);
+			setAlertMsg(data?.msg);
+			if (data?.login) {
+				setAlertType('success');
+				dispatch(addUserDetails({
+					loggedIn: true,
+					...data1
+				}));
+				navigate(ROUTES.HOME);
+			} else {
+				setAlertType('error');
+				setLoginSelected(false);
+				setVerifiedMobile(false);
+			}
+			setOpenAlert(true);
+		} catch (e) {
+			setOpenAlert(true);
+			setAlertMsg('Something Went Wrong!');
+			setAlertType('error');
+			setVerifiedMobile(false);
+		} finally {
+			setLoading(false);
+			setTimeout(() => setOpenAlert(false), 6000);
+		}
+	}
+
+	const handleVerifyOtp = async () => {
+		try {
+			setLoading(true);
+			await confirmation.confirm(otp);
+			setAlertMsg("Mobile OTP Verified!");
+			setAlertType('success');
+			setOpenAlert(true);
+			setVerifiedMobile(true);
+			if (type === "login") {
+				handleLoginApiCall();
+			}
+		} catch (e) {
+			setAlertMsg("Incorrect or Bad Verification Code");
+			setAlertType('error');
+			setOpenAlert(true);
+		} finally {
+			setLoading(false);
+		}
+		setShowOtpInput(false);
 	}
 
 	const updateOtp = (val) => {
@@ -289,19 +449,17 @@ const MobileSignUp = (props) => {
 					</>
 				)
 			}
-
+			<div id="recaptcha-container"></div>
 		</>
 	)
 }
 
-const Login = () => {
+const Login = ({ setAlertMsg, setAlertType, setOpenAlert, setLoading, setLoginSelected, mobile, setMobile, setVerifiedMobile, verifiedMobile }) => {
 	const [mobileOtpLogin, setMobileOtpLogin] = useState(false);
-	const [mobile, setMobile] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showOtpInput, setShowOtpInput] = useState(false);
 	const [otp, setOtp] = useState('');
-	const [verifiedMobile, setVerifiedMobile] = useState(false);
 
 	const handleToggleChange = (e) => {
 		const val = e.target.checked;
@@ -327,6 +485,11 @@ const Login = () => {
 						setOtp={setOtp}
 						verifiedMobile={verifiedMobile}
 						setVerifiedMobile={setVerifiedMobile}
+						setAlertMsg={setAlertMsg}
+						setAlertType={setAlertType}
+						setOpenAlert={setOpenAlert}
+						setLoading={setLoading}
+						setLoginSelected={setLoginSelected}
 						type="login"
 					/>
 				) : (
@@ -335,6 +498,13 @@ const Login = () => {
 						setEmail={setEmail}
 						password={password}
 						setPassword={setPassword}
+						setAlertMsg={setAlertMsg}
+						setAlertType={setAlertType}
+						setOpenAlert={setOpenAlert}
+						setLoading={setLoading}
+						setLoginSelected={setLoginSelected}
+						setMobile={setMobile}
+						setVerifiedMobile={setVerifiedMobile}
 						btnText="Proceed"
 						type="login"
 					/>
@@ -344,17 +514,15 @@ const Login = () => {
 	)
 }
 
-const SignUp = () => {
+const SignUp = ({ setAlertMsg, setAlertType, setOpenAlert, setLoading, setLoginSelected, mobile, setMobile, setVerifiedMobile, verifiedMobile }) => {
 
 	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [mobileOtpLogin, setMobileOtpLogin] = useState(false);
-	const [mobile, setMobile] = useState('');
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showOtpInput, setShowOtpInput] = useState(false);
 	const [otp, setOtp] = useState('');
-	const [verifiedMobile, setVerifiedMobile] = useState(false);
 
 	return (
 		<Box style={{ padding: '0 1rem', display: 'flex', flexDirection: 'column', marginTop: '1rem'}}>
@@ -393,6 +561,11 @@ const SignUp = () => {
 				setOtp={setOtp}
 				verifiedMobile={verifiedMobile}
 				setVerifiedMobile={setVerifiedMobile}
+				setAlertMsg={setAlertMsg}
+				setAlertType={setAlertType}
+				setOpenAlert={setOpenAlert}
+				setLoading={setLoading}
+				setLoginSelected={setLoginSelected}
 				type="signup"
 			/>
 			{
@@ -402,6 +575,16 @@ const SignUp = () => {
 						setEmail={setEmail}
 						password={password}
 						setPassword={setPassword}
+						firstName={firstName}
+						lastName={lastName}
+						mobile={mobile}
+						setAlertMsg={setAlertMsg}
+						setAlertType={setAlertType}
+						setOpenAlert={setOpenAlert}
+						setLoading={setLoading}
+						setLoginSelected={setLoginSelected}
+						setMobile={setMobile}
+						setVerifiedMobile={setVerifiedMobile}
 						btnText="Submit"
 						type="signup"
 					/>
@@ -414,9 +597,31 @@ const SignUp = () => {
 const SignUpContainer = () => {
   const classes = useStyles();
   const [loginSelected, setLoginSelected] = useState(true);
+  const [alertType, setAlertType] = useState('');
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [mobile, setMobile] = useState('');
+  const [verifiedMobile, setVerifiedMobile] = useState(false);
 
   return (
 	<Box className={classes.main}>
+		<BackDrop open={loading} />
+		<Snackbar
+			style={{
+				width: '100%',
+				margin: window.innerWidth < 900 ? '20px 0' : '20px 25%',
+				display: 'flex',
+				justifyContent: 'center',
+			}}
+			anchorOrigin={{
+				vertical: "top",
+				horizontal: "center"
+				}}
+			open={openAlert}
+		>
+			<Alert severity={alertType}>{alertMsg}</Alert>
+		</Snackbar>
 		<Grid container className={classes.container}>
 			<img src={LoginSideImg} className={classes.imgStyle} alt="Welcome to MF" />
 			<Box className={classes.profileContainer}>
@@ -448,7 +653,29 @@ const SignUpContainer = () => {
 							</Typography>
 						</Box>
 						{
-							loginSelected ? <Login /> : <SignUp />
+							loginSelected ? 
+							<Login
+								setAlertMsg={setAlertMsg}
+								setAlertType={setAlertType}
+								setOpenAlert={setOpenAlert}
+								setLoading={setLoading}
+								setLoginSelected={setLoginSelected}
+								mobile={mobile}
+								setMobile={setMobile}
+								verifiedMobile={verifiedMobile}
+								setVerifiedMobile={setVerifiedMobile}
+							/> : 
+							<SignUp 
+								setAlertMsg={setAlertMsg}
+								setAlertType={setAlertType}
+								setOpenAlert={setOpenAlert}
+								setLoading={setLoading}
+								setLoginSelected={setLoginSelected}
+								mobile={mobile}
+								setMobile={setMobile}
+								verifiedMobile={verifiedMobile}
+								setVerifiedMobile={setVerifiedMobile}
+							/>
 						}
 					</Box>
 				</Box>

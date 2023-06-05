@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReadFromExcel from './ReadFromExcel';
-import {Tabs,  Tab} from '@mui/material';
+import {Tabs, Tab} from '@mui/material';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { makeStyles, Typography, Box, Button } from '@material-ui/core';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ICDInput from './ICDInput.Layout.js';
 import BackDrop from '../common/BackDrop';
+import { addUserDetails } from '../redux/LandingReducer/ProfileReducer';
+import { ROUTES } from '../../Route/Routes.constants';
 
 const useStyles = makeStyles(() => {
 	return {
@@ -83,30 +87,51 @@ const useStyles = makeStyles(() => {
 	}
 });
 
-const profileData = [
-	{
-		key: 'Name',
-		value: 'RAHUL GUPTA',
-	},
-	{
-		key: 'Email',
-		value: 'rahulgupta201299@gmail.com',
-	},
-	{
-		key: 'Mobile No',
-		value: '+91 - 9163277940',
-	}
-]
-
 const Profile = () => {
   const [value, setValue] = useState('Profile');
   const [hover, setHover] = useState(false);
   const [loading, setLoading] = useState(false);
+  const userData = useSelector((state) => state.profile.login); 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const classes = useStyles();
+  const adminEmail = 'admin@gmail.com';
+
+  const checkAdmin = adminEmail === userData?.email;
+
+  useEffect(() => {
+	if (!userData.loggedIn) navigate(ROUTES.LOGIN);
+  }, []);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const profileData = [
+		{
+			key: 'Name',
+			value: userData?.firstName + " " + userData?.lastName,
+		},
+		{
+			key: 'Email',
+			value: userData?.email,
+		},
+		{
+			key: 'Mobile No',
+			value: '+91 - ' + userData?.phoneNumber,
+		},
+	];
+
+	const handleSignOut = () => {
+		dispatch(addUserDetails({
+			firstName: '',
+			lastName: '',
+			email: '',
+			phoneNumber: '',
+			loggedIn: false,
+		}));
+		navigate(ROUTES.LOGIN);
+	}
 
   return (
     <Box>
@@ -123,24 +148,33 @@ const Profile = () => {
 					style={{ 
 						fontWeight: 700,
 						marginTop: window.innerWidth < 900 ? '0' : '30px',
-						marginLeft:  window.innerWidth < 900 ? 'auto' : '0'
+						marginLeft:  window.innerWidth < 900 ? 'auto' : '0',
+						marginRight:  window.innerWidth < 900 && !checkAdmin ? 'auto' : '0'
 					}}
 					value="Profile"
 					label="Profile"
 				/>
-				<Tab 
-					style={{ fontWeight: 700 }} 
-					value="Bonds" 
-					label="Bonds"
-				/>
-				<Tab 
-					style={{ 
-						fontWeight: 700,
-						marginRight: window.innerWidth < 900 ? 'auto' : '0',
-					}} 
-					value="ICD" 
-					label="ICD"
-				/>
+				{
+					checkAdmin && (
+						<Tab 
+							style={{ fontWeight: 700 }} 
+							value="Bonds" 
+							label="Bonds"
+						/>
+					)
+				}
+				{
+					checkAdmin && (
+						<Tab 
+							style={{ 
+								fontWeight: 700,
+								marginRight: window.innerWidth < 900 ? 'auto' : '0',
+							}} 
+							value="ICD" 
+							label="ICD"
+						/>
+					)
+				}
 			</Tabs>
 			<Box className={classes.itemContainer}>
 				{
@@ -177,6 +211,7 @@ const Profile = () => {
 								className={classes.btnStyle}
 								onMouseEnter={() => setHover(true)}
 								onMouseLeave={() => setHover(false)}
+								onClick={handleSignOut}
 							>
 								Sign Out
 							</Button>
@@ -190,7 +225,7 @@ const Profile = () => {
 							<Typography className={classes.header}>
 								Update the Bond Sheet
 							</Typography>
-							<ReadFromExcel setLoading={setLoading} />
+							<ReadFromExcel setLoading={setLoading} type="bond" />
 						</Box>
 					)
 				}
@@ -200,7 +235,7 @@ const Profile = () => {
 							<Typography className={classes.header}>
 								Update the ICD Value's
 							</Typography>
-							<ICDInput />
+							<ICDInput  />
 						</Box>
 					)
 				}
