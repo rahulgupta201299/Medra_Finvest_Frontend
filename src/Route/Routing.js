@@ -3,6 +3,7 @@ import LandingPage from "../component/LandingPage/LandingPage.Layout";
 import Profile from "../component/Profile/Profile.Layout";
 import Signup from "../component/Profile/Signup.Layout";
 import AboutUs from "../component/AboutUs/AboutUs";
+import QAWrapper from '../component/QABonds/QAWrapper';
 
 export const APP_ROUTES = [
 	{
@@ -25,4 +26,9 @@ export const APP_ROUTES = [
 		exact: true,
 		element: <AboutUs />,
 	},
+	{
+		path: `/:id`,
+		exact: true,
+		element: <QAWrapper />
+	}
 ]

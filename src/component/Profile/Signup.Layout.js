@@ -264,6 +264,7 @@ const MobileSignUp = (props) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const [confirmation, setConfirmation] = useState('');
+	const [showCaptcha, setShowCaptcha] = useState(true);
 
 	const handleMobileChange = (e) => {
 		const val = e.target.value.replace(/\D/g, '');
@@ -286,6 +287,26 @@ const MobileSignUp = (props) => {
 
 	const handleSendOtp = async () => {
 		setUpRecaptcha();
+		if ( type === "login") {
+			try {
+				const _res = await Axios.get(`/profile/${mobile}`);
+				const { data } = _res;
+				setAlertMsg(data?.msg);
+				setOpenAlert(true);
+				if (data?.found) setAlertType('success');
+				else {
+					setAlertType('error');
+					setLoginSelected(false);
+					return;
+				}
+			} catch (e) {
+				setAlertMsg('Something went wrong!');
+				setOpenAlert(true);
+				setAlertMsg('error');
+			} finally {
+				setTimeout(() => setOpenAlert(false), 6000);
+			}
+		}
 		var phoneNumber = "+91" + mobile;
         var appVerifier = window.recaptchaVerifier;
 
@@ -304,6 +325,7 @@ const MobileSignUp = (props) => {
 			setOpenAlert(true);
 		} finally {
 			setLoading(false);
+			setShowCaptcha(false);
 		}
 		setTimeout(() => setOpenAlert(false), 6000);
 	}
@@ -355,14 +377,15 @@ const MobileSignUp = (props) => {
 			if (type === "login") {
 				handleLoginApiCall();
 			}
+			setShowOtpInput(false);
 		} catch (e) {
 			setAlertMsg("Incorrect or Bad Verification Code");
 			setAlertType('error');
 			setOpenAlert(true);
 		} finally {
 			setLoading(false);
+			setShowCaptcha(true);
 		}
-		setShowOtpInput(false);
 	}
 
 	const updateOtp = (val) => {
@@ -431,6 +454,7 @@ const MobileSignUp = (props) => {
 								onClick={() => {
 									setShowOtpInput(false);
 									setOtp('');
+									setShowCaptcha(true);
 								}}
 							>
 								Edit
@@ -449,7 +473,9 @@ const MobileSignUp = (props) => {
 					</>
 				)
 			}
-			<div id="recaptcha-container"></div>
+			{
+				showCaptcha && <div id="recaptcha-container"></div>
+			}
 		</>
 	)
 }
