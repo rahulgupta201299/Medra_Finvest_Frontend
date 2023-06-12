@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Button, FormControlLabel, Grid, Switch, Typography, makeStyles } from '@material-ui/core';
 import OtpInput from 'react-otp-input';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LoginSideImg from '../../assets/ProfileImg.jpeg'
 import InputText from '../common/InputText';
 import { Alert, Snackbar } from '@mui/material';
-import firebase, { auth } from '../common/Firebase';
 import BackDrop from '../common/BackDrop';
 import Axios from '../common/Axios';
 import { ROUTES } from '../../Route/Routes.constants';
@@ -263,8 +262,6 @@ const MobileSignUp = (props) => {
 	const classes = useStyles();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const [confirmation, setConfirmation] = useState('');
-	const [showCaptcha, setShowCaptcha] = useState(true);
 
 	const handleMobileChange = (e) => {
 		const val = e.target.value.replace(/\D/g, '');
@@ -272,23 +269,10 @@ const MobileSignUp = (props) => {
 		setMobile(val);
 	}
 
-	const setUpRecaptcha=()=>{
-        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            'size': 'invisible',
-            'callback': function(response) {
-              handleSendOtp();
-            },
-            'expired-callback':(err)=>{
-                console.log(err);
-            },
-            defaultCountry: "IN",
-        });
-    }
-
 	const handleSendOtp = async () => {
-		setUpRecaptcha();
 		if ( type === "login") {
 			try {
+				setLoading(true);
 				const _res = await Axios.get(`/profile/${mobile}`);
 				const { data } = _res;
 				setAlertMsg(data?.msg);
@@ -304,28 +288,26 @@ const MobileSignUp = (props) => {
 				setOpenAlert(true);
 				setAlertMsg('error');
 			} finally {
+				setLoading(false);
 				setTimeout(() => setOpenAlert(false), 6000);
 			}
 		}
-		var phoneNumber = "+91" + mobile;
-        var appVerifier = window.recaptchaVerifier;
 
 		try {
 			setLoading(true);
-			const _confirmation = await auth.signInWithPhoneNumber(phoneNumber, appVerifier);
+			const res = await Axios.post('/profile/send-otp', { mobile });
+			const { data } = res;
 			setShowOtpInput(true);
-			setConfirmation(_confirmation);
-			setAlertMsg("OTP Sent Successfully!");
+			setAlertMsg(data?.msg);
 			setAlertType('success');
 			setOpenAlert(true);
 		} catch (e) {
 			setShowOtpInput(false);
-			setAlertMsg("Some error Occured. Try Again!");
+			setAlertMsg("Send Otp Fails! Try Again.");
 			setAlertType('error');
 			setOpenAlert(true);
 		} finally {
 			setLoading(false);
-			setShowCaptcha(false);
 		}
 		setTimeout(() => setOpenAlert(false), 6000);
 	}
@@ -369,22 +351,24 @@ const MobileSignUp = (props) => {
 	const handleVerifyOtp = async () => {
 		try {
 			setLoading(true);
-			await confirmation.confirm(otp);
-			setAlertMsg("Mobile OTP Verified!");
-			setAlertType('success');
+			const res = await Axios.post('/profile/verify-otp', { mobile, otp });
+			const { data } = res;
 			setOpenAlert(true);
-			setVerifiedMobile(true);
-			if (type === "login") {
+			setAlertMsg(data?.msg);
+			if (data?.verify) setAlertType('success');
+			else setAlertType('error');
+			setVerifiedMobile(data?.verify);
+			if (type === "login" && data?.verify) {
 				handleLoginApiCall();
 			}
-			setShowOtpInput(false);
+			setShowOtpInput(!data?.verify);
 		} catch (e) {
-			setAlertMsg("Incorrect or Bad Verification Code");
+			setAlertMsg("Something went wrong!");
 			setAlertType('error');
 			setOpenAlert(true);
 		} finally {
 			setLoading(false);
-			setShowCaptcha(true);
+			setTimeout(() => setOpenAlert(false), 6000);
 		}
 	}
 
@@ -454,7 +438,6 @@ const MobileSignUp = (props) => {
 								onClick={() => {
 									setShowOtpInput(false);
 									setOtp('');
-									setShowCaptcha(true);
 								}}
 							>
 								Edit
@@ -472,9 +455,6 @@ const MobileSignUp = (props) => {
 						</Box>
 					</>
 				)
-			}
-			{
-				showCaptcha && <div id="recaptcha-container"></div>
 			}
 		</>
 	)
@@ -630,6 +610,10 @@ const SignUpContainer = () => {
   const [mobile, setMobile] = useState('');
   const [verifiedMobile, setVerifiedMobile] = useState(false);
 
+  useEffect(() => {
+	window.scrollTo(0, 0);
+  }, []);
+
   return (
 	<Box className={classes.main}>
 		<BackDrop open={loading} />
@@ -643,7 +627,7 @@ const SignUpContainer = () => {
 			anchorOrigin={{
 				vertical: "top",
 				horizontal: "center"
-				}}
+			}}
 			open={openAlert}
 		>
 			<Alert severity={alertType}>{alertMsg}</Alert>

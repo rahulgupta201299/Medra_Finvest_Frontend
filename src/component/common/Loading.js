@@ -13,4 +13,4 @@ const Loading = ({ open }) => {
   )
 }
 
-export default Loading
+export default Loading;

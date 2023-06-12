@@ -235,7 +235,7 @@ const Profile = () => {
 							<Typography className={classes.header}>
 								Update the ICD Value's
 							</Typography>
-							<ICDInput  />
+							<ICDInput setLoading={setLoading} type="ICD" />
 						</Box>
 					)
 				}
