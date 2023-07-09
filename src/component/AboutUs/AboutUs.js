@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box, Typography, makeStyles } from '@material-ui/core';
 import WhyUsImg from '../../assets/WhyUsImg.png'
 import AboutUsImg from '../../assets/AboutUsImg.png'
@@ -80,6 +80,10 @@ const useStyles = makeStyles(() => {
 const AboutUs = () => {
 
   const classes = useStyles();
+
+  useEffect(() => {
+	window.scrollTo(0, 0);
+  }, []);
 
   return (
 	<>

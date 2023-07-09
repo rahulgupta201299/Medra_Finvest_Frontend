@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Typical from 'react-typical'
 import { Button, Box, Typography, Grid } from '@material-ui/core';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ import Rank1 from '../../assets/Rank1.png';
 import LowRiskIcon from '../../assets/LowRiskIcon.png';
 import SystemUpdate from '../../assets/SystemUpdate.png';
 import ReturnOnInvestment from '../../assets/ReturnOnInvestment.png';
+import BusinessLoanImg from '../../assets/BusinessLoanImg.jpg';
 import { BondDetails, learnAboutBondsData, meetOurTeam  } from '../common/Data.constant';
 import BoxSection from './BoxSection.Layout';
 
@@ -170,6 +171,43 @@ const useStyles = makeStyles(theme => ({
 		cursor: 'pointer',
 		letterSpacing: '1px',
 	},
+	icdContainer: {
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		'@media screen and (max-width: 899px)': {
+			flexDirection: 'column',
+			alignItems: 'center',
+		},
+	},
+	icdDetails: {
+		backgroundColor: '#FFCE66',
+		width: '100%',
+		borderRadius: '1rem',
+		padding: '1rem',
+		'@media screen and (max-width: 899px)': {
+			width: '70%',
+		},
+		'@media screen and (max-width: 700px)': {
+			width: '80%',
+		},
+		'@media screen and (max-width: 550px)': {
+			width: '90%',
+		},
+		'@media screen and (max-width: 450px)': {
+			width: '100%',
+		}
+	},
+	btnStyle4: {
+		margin: 'auto',
+		fontWeight: 700,
+		padding: '0.5rem 1.5rem',
+		textTransform: 'capitalize',
+		borderRadius: '8px',
+		cursor: 'pointer',
+		letterSpacing: '1px',
+		color: '#FFF',
+	}
 }));
 
 const bondData = [
@@ -307,16 +345,39 @@ const bondData = [
 	},
 ];
 
+const IcdData = [
+	{
+		key: 'Min Tenure',
+		value: '6 Months',
+	},
+	{
+		key: 'Max Tenure',
+		value: '1 Year 6 Months',
+	},
+	{
+		key: 'Rate Of Interest',
+		value: '12-16%',
+	},
+	{
+		key: 'Min Tenure',
+		value: '1 Year 6 Months',
+	}
+]
+
 const LandingPage = () => {
 
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   const classes = useStyles();
   const profileData = useSelector((state) => state.profile.login);
-  console.log(profileData);
+
+  useEffect(() => {
+	window.scrollTo(0, 0);
+  }, []);
+
   return (
-	<Box style={{ backgroundColor: '#D4F1F4' }}>
-		<Box className={classes.upperContainer}>
+	<Box>
+		<Box style={{ backgroundColor: '#D4F1F4' }} className={classes.upperContainer}>
 			<Box className={classes.upperChildContainer}>
 				<Typography className={classes.mainHeader}>
 					Invest in High Rated Bonds
@@ -359,6 +420,27 @@ const LandingPage = () => {
 				</Button>
 			</Box>
 			<img className={classes.imgStyle} src={LandingImg} alt="bonds" />
+		</Box>
+		<Box style={{ backgroundColor: '#fdfdfd', padding: '1.5rem' }}>
+			<Box style={{ display: 'flex', justifyContent: 'space-between' }}>
+				<Typography style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+					InterCorporate Deposit
+				</Typography>
+				<Button style={{ marginTop: 0 }} className={classes.btnStyle4}>
+					Explore Now
+				</Button>
+			</Box>
+			<Box className={classes.icdContainer}>
+				<img className={classes.imgStyle} src={BusinessLoanImg} alt="Business Loan" />
+				<Box className={classes.icdDetails}>
+					<Typography style={{ fontSize: '1.3rem', fontWeight: 600 }}>
+						Business Loan
+					</Typography>
+					<Box style={{ marginTop: '1rem', }}>
+
+					</Box>
+				</Box>
+			</Box>
 		</Box>
 		<BoxSection bondData={bondData} learnAboutBondsData={null} />
 		<Box style={{ backgroundColor: '#F5F5F5', padding: '1rem 0', }}>

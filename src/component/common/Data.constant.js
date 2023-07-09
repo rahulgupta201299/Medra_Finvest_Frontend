@@ -35,17 +35,20 @@ export const BondDetails = [
 
 export const learnAboutBondsData = [
 	{
+		id: 1,
 		src: LearnAboutBondImg,
 		title: 'Must know about Bonds before investing',
 		to: ROUTES.BOND_EXPLAINATION,
 		
 	},
 	{
+		id: 2,
 		src: PerksOfInvestingImg,
 		title: 'Perks of investing in Bonds',
 		to: ROUTES.PERKS_ON_BOND_INVESTING,
 	},
 	{
+		id: 3,
 		src: WhichOneToInvestImg,
 		title: `Decision making for investing in FD's, PPF or Bond-ETF`,
 		to: ROUTES.DECISION_MAKING_ON_INVESTMENT,
